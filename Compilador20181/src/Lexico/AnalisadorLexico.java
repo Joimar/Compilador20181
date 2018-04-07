@@ -63,11 +63,19 @@ public class AnalisadorLexico
         
         if( (palavra.charAt(contador)>=65 && palavra.charAt(contador)<=90) || (palavra.charAt(contador)>=97 && palavra.charAt(contador)<=122) ) {status = status_id; verificaID(palavra);}
         else if(palavra.charAt(contador)>=48 && palavra.charAt(contador)<=57 ) status = status_numero;
-        else if(palavra.charAt(contador)==43 || palavra.charAt(contador)==42 || palavra.charAt(contador)==45 || palavra.charAt(contador)==47) status = status_op_ari;
+        else if(palavra.charAt(contador)==43 || palavra.charAt(contador)==42 || palavra.charAt(contador)==45 || palavra.charAt(contador)==47){ status = status_op_ari; verificaAri(palavra);}
         else if(palavra.charAt(contador)==61 || palavra.charAt(contador)==60 || palavra.charAt(contador)==62) status = status_op_relacional;
         else if(palavra.charAt(contador)==33 || palavra.charAt(contador)==38 || palavra.charAt(contador)==124) status = status_op_logico;
         
         
+    }
+    
+    public boolean verificaEspaco(char espaco)
+    {
+    
+        if(espaco == 9 || espaco == 10 || espaco == 13 || espaco == 32) return true;
+        else return false;
+    
     }
     
     public boolean verificaPalavraReservada(String palavra)
@@ -85,7 +93,95 @@ public class AnalisadorLexico
         
         else return false;
     }
-     
+    public boolean verificaDigito(char digito)
+    {
+    
+        if(digito>=48 && digito<=57) return true;
+        else return false;
+    
+    }
+    public boolean verificaLetra(char letra)
+    {
+    
+        if((letra>=65 && letra<=90) || (letra>=97 && letra<=122)) return true;
+        else return false;
+    }
+    public boolean verificaAri(String deli)
+    {
+        boolean flagmais = false;
+        boolean flagmenos = false;
+        String aux = new String();
+        Token token;
+        for(int i=contador;i<deli.length();i++)
+        {
+        
+              //+
+            if(deli.charAt(i)==43)
+            {
+                if(flagmais==false)
+                {
+                    aux = Character.toString(deli.charAt(i));
+                    if(i<deli.length()-1)// evita estourar o array
+                    {
+                        if(deli.charAt(i+1)==43)
+                        {
+                            flagmais=true;
+                        }
+                        else
+                        {
+                        
+                            token = new Token(linha+1, aux, tipo_op_ari);
+                            tokens.add(token);
+                        }
+                        
+                    }
+                    else
+                    {
+                    
+                        token = new Token(linha+1,aux,tipo_op_ari);
+                        tokens.add(token);
+                    }
+                    
+                }
+                else
+                {
+                
+                    aux += deli.charAt(i);
+                    token = new Token(linha+1,aux,tipo_op_ari);
+                    tokens.add(token);
+                    flagmais=false;
+                    aux = "";
+                    return true;
+                }
+            }
+            
+             //-
+            else if(deli.charAt(i)==45)
+            {
+                
+                return true;
+            }
+            //*
+            else if(deli.charAt(i)==42){return true;}
+             // /
+            else if(deli.charAt(i)==47){return true;}
+            
+            else return false;
+        
+        }
+      
+       
+        
+       
+        return false;
+        
+    }
+    public void verificaNumero(String palavra)
+    {
+    
+        String aux = new String();
+        
+    }
     public void verificaID(String palavra)
     {
         String aux = new String();
@@ -95,12 +191,14 @@ public class AnalisadorLexico
         {
         
             aux += palavra.charAt(i);
+            if(verificaLetra(palavra.charAt(i))==false) flag = false;
+            else if(verificaDigito(palavra.charAt(i))==false) flag = false;
         }
         contador = i;
         Token token = new Token(linha+1, aux, tipo_id);
         tokens.add(token);
-        System.out.println("A SAIDA:  ");
-        System.out.println(tokens.get(0));
+        
+        
     }
      
     public void analise(ArrayList<String> texto)
