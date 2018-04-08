@@ -60,14 +60,15 @@ public class AnalisadorLexico
     
     public void direcionador(String palavra)
     {
-        
-        if( (palavra.charAt(contador)>=65 && palavra.charAt(contador)<=90) || (palavra.charAt(contador)>=97 && palavra.charAt(contador)<=122) ) {status = status_id; verificaID(palavra);}
-        else if(palavra.charAt(contador)>=48 && palavra.charAt(contador)<=57 ) status = status_numero;
-        else if(palavra.charAt(contador)==43 || palavra.charAt(contador)==42 || palavra.charAt(contador)==45 || palavra.charAt(contador)==47){ status = status_op_ari; verificaAri(palavra);}
-        else if(palavra.charAt(contador)==61 || palavra.charAt(contador)==60 || palavra.charAt(contador)==62) status = status_op_relacional;
-        else if(palavra.charAt(contador)==33 || palavra.charAt(contador)==38 || palavra.charAt(contador)==124) status = status_op_logico;
-        
-        
+        for(int i=contador; contador<palavra.length();contador++)
+        {
+                if( (palavra.charAt(contador)>=65 && palavra.charAt(contador)<=90) || (palavra.charAt(contador)>=97 && palavra.charAt(contador)<=122) ) {status = status_id; verificaID(palavra);}
+                else if(palavra.charAt(contador)>=48 && palavra.charAt(contador)<=57 ) status = status_numero;
+                else if(palavra.charAt(contador)==43 || palavra.charAt(contador)==42 || palavra.charAt(contador)==45 || palavra.charAt(contador)==47){ status = status_op_ari; verificaAri(palavra);}
+                else if(palavra.charAt(contador)==61 || palavra.charAt(contador)==60 || palavra.charAt(contador)==62) status = status_op_relacional;
+                else if(palavra.charAt(contador)==33 || palavra.charAt(contador)==38 || palavra.charAt(contador)==124) status = status_op_logico;
+        }
+        contador =0;
     }
     
     public boolean verificaEspaco(char espaco)
@@ -126,12 +127,14 @@ public class AnalisadorLexico
                         if(deli.charAt(i+1)==43)
                         {
                             flagmais=true;
+                            contador++;
                         }
                         else
                         {
                         
                             token = new Token(linha+1, aux, tipo_op_ari);
                             tokens.add(token);
+                            aux= "";
                         }
                         
                     }
@@ -140,6 +143,7 @@ public class AnalisadorLexico
                     
                         token = new Token(linha+1,aux,tipo_op_ari);
                         tokens.add(token);
+                        aux="";
                     }
                     
                 }
@@ -151,6 +155,7 @@ public class AnalisadorLexico
                     tokens.add(token);
                     flagmais=false;
                     aux = "";
+                   
                     return true;
                 }
             }
@@ -204,22 +209,28 @@ public class AnalisadorLexico
     public void analise(ArrayList<String> texto)
     {
         codigo = texto;
+        int i=0;
         int teste = texto.get(linha).length();
         
            for(linha = 0; linha < codigo.size(); linha++)
            {
-           
-                switch(status)
-                {
+             //  for(i=contador; contador<codigo.get(contador).length();contador++)
+              // {
+               
+                    switch(status)
+                    {
         
-                    case status_neutro:
-                        direcionador(codigo.get(linha));
+                        case status_neutro:
+                            direcionador(codigo.get(linha));
                 
-                    case status_id:
+                        case status_id:
                         //verificaID(codigo.get(linha));
                 
                             
-                }
+                    }
+               
+              // }
+               
                
            
             
